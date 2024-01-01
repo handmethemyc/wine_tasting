@@ -1,0 +1,60 @@
+/* Reset some default styles and apply some basic styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+}
+
+/* Style the header and navigation bar */
+header {
+  background-color: #333;
+  color: #fff;
+  padding: 10px 0;
+  text-align: center;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+}
+
+.nav-links li {
+  margin: 0 10px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #fff;
+  font-weight: bold;
+  padding: 10px 15px; /* Add padding for a touch-friendly area */
+  border-radius: 5px; /* Add rounded corners */
+  transition: background-color 0.3s ease; /* Add a smooth hover transition */
+}
+
+/* Style for active link (if necessary) */
+.nav-links a.active {
+  background-color: #ff5733; /* Change background color for active link */
+}
+
+/* Hover effect for links */
+.nav-links a:hover {
+  background-color: #555; /* Change background color on hover */
+}
+
+.logo-image {
+  max-width: 50px;
+  max-height: 50px;
+  width: auto;
+  height: auto;
+}

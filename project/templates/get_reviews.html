@@ -1,0 +1,22 @@
+{% extends 'base.html' %} {% block content %}
+<table>
+  <thead>
+    <tr>
+      <th>Wine</th>
+      <th>Guest</th>
+      <th>Notes</th>
+      <th>Rating</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for review in reviews %}
+    <tr>
+      <td>{{review.wine_id}}</td>
+      <td>{{review.user}}</td>
+      <td>{{review.notes}}</td>
+      <td>{{review.rating}}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock content %}

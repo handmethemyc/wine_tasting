@@ -1,0 +1,31 @@
+{% extends 'base.html' %} {% block content %}
+<h3 class="fa">Rating Wine # {{id}}</h3>
+<form method="POST">
+  <label for="slider" class="fa-solid">Select a Value:</label>
+  <input
+    type="range"
+    id="rating"
+    name="rating"
+    min="0"
+    max="100"
+    step="1"
+    value="{{ review.rating }}"
+  />
+  <output for="slider" id="sliderValue">{{ review.rating }}</output><br />
+  <label for="notes" class="fa-solid">Notes</label>
+  <textarea name="notes" id="notes" rows="5">{{ review.notes }}</textarea>
+  <br />
+  <input type="submit" name="action" value="Previous" />
+  <input type="submit" name="action" value="Next" />
+</form>
+
+<script>
+  // JavaScript to update the output element with the current slider value
+  const slider = document.getElementById("rating");
+  const sliderValue = document.getElementById("sliderValue");
+
+  slider.addEventListener("input", () => {
+    sliderValue.textContent = slider.value;
+  });
+</script>
+{% endblock content %}

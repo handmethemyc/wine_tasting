@@ -1,0 +1,10 @@
+{% extends 'base.html' %} {% block content %}
+<form method="POST">
+  <label for="guest" class="fa-solid">Guest </label> <br />
+  <input type="text" label="Guest" id="guest" name="guest" /> <br />
+
+  <label for="wine_name" class="fa-solid">Wine Name </label> <br />
+  <input type="text" label="Wine Name" id="wine_name" name="wine_name" /> <br />
+  <button type="submit">Submit</button>
+</form>
+{% endblock content %}

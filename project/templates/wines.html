@@ -1,0 +1,22 @@
+{% extends 'base.html' %} {% block content %} {% if wines %}
+<table class="wine-table">
+  <thead>
+    <tr>
+      <th>Wine Number</th>
+      <th>Guest</th>
+      <th>Wine Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for wine in wines %}
+    <tr>
+      <td>{{ wine.id }}</td>
+      <td>{{ wine.guest }}</td>
+      <td>{{ wine.name }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No Wines Entered Yet</p>
+{% endif %} {% endblock content %}

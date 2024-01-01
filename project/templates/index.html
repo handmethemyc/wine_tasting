@@ -1,0 +1,9 @@
+{% extends 'base.html' %} {% block content %} {% if user %}
+<p>Welcome {{user}}</p>
+{% else %}
+<form method="POST">
+  <label for="user"> Who dafuk this? </label>
+  <input name="user" id="user" type="text" />
+  <button type="submit">Submit</button>
+</form>
+{% endif %} {% endblock content %}
