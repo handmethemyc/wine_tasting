@@ -58,3 +58,18 @@ nav {
   width: auto;
   height: auto;
 }
+
+.leaderboard {
+  /* Add your custom styling here */
+  border-collapse: collapse;
+  width: 100%;
+}
+.leaderboard th,
+.leaderboard td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+.leaderboard th {
+  background-color: #4caf50;
+  color: white;
+}

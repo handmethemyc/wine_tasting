@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session
 from models import Wines, Reviews, db
 from decorators import login_required
+import pandas as pd
 
 
 bp = Blueprint("wine", __name__)
@@ -86,3 +87,23 @@ def add_review(id):
 def get_reviews():
     reviews = Reviews.query.all()
     return render_template("get_reviews.html", reviews=reviews)
+
+
+@bp.route("/leaderboard")
+def leaderboard():
+    df = pd.read_sql_table("reviews", db.engine)
+
+    # Compute average ratings and sort
+    leaderboard_df = (
+        df.groupby("wine_id")["rating"]
+        .mean()
+        .sort_values(ascending=False)
+        .reset_index()
+    )
+
+    # Convert DataFrame to HTML table
+    leaderboard_html = leaderboard_df.to_html(
+        index=False, classes="leaderboard", border=0
+    )
+
+    return render_template("leaderboard.html", leaderboard=leaderboard_html)
