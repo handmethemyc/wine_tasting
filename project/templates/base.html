@@ -30,21 +30,12 @@
           <i class="fa-solid fa-wine-glass"
             ><a href="{{ url_for('wine.about') }}">About</a></i
           >
-          <i class="fa-solid fa-wine-glass"
-            ><a href="{{ url_for('wine.add_wine') }}">Add Wine</a></i
-          >
-          <i class="fa-solid fa-wine-glass"
-            ><a href="{{ url_for('wine.get_wines') }}">Wines</a></i
-          >
           <i class="fa-solid fa-wine-glass">
             <a href="{{ url_for('wine.add_review', id=1) }}">Add Review</a>
           </i>
-          <i class="fa-solid fa-wine-glass"
-            ><a href="{{ url_for('wine.get_reviews') }}">Get Reviews</a></i
-          >
-          <i class="fa-solid fa-wine-glass"
-            ><a href="{{ url_for('wine.leaderboard') }}">Leaderboard</a></i
-          >
+          <i class="fa-solid fa-wine-glass">
+            <a href="{{ url_for('wine.admin') }}">Admin</a>
+          </i>
         </ul>
       </nav>
     </header>

@@ -1,0 +1,17 @@
+{% extends 'base.html' %} {% block content %}
+<h2 class="fa-solid">Admin</h2>
+<ul>
+  <i class="fa-solid fa-wine-glass"
+    ><a href="{{ url_for('wine.add_wine') }}">Add Wine</a></i
+  ><br />
+  <i class="fa-solid fa-wine-glass"
+    ><a href="{{ url_for('wine.get_wines') }}">Get Wines</a></i
+  ><br />
+  <i class="fa-solid fa-wine-glass"
+    ><a href="{{ url_for('wine.get_reviews') }}">Get Reviews</a></i
+  ><br />
+  <i class="fa-solid fa-wine-glass"
+    ><a href="{{ url_for('wine.leaderboard') }}">Leaderboard</a></i
+  ><br />
+</ul>
+{% endblock content %}

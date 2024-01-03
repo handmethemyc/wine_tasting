@@ -6,6 +6,35 @@ import pandas as pd
 
 bp = Blueprint("wine", __name__)
 
+from flask import Flask
+from flask_httpauth import HTTPBasicAuth
+
+auth = HTTPBasicAuth()
+
+admin_users = {"admin": "bellabites"}  # Replace with your desired username and password
+
+
+@auth.verify_password
+def verify_password(username, password):
+    print(f"username={username}, passoword={password}")
+    if username in admin_users and admin_users[username] == password:
+        return username
+
+
+@bp.route("/admin")
+@auth.login_required
+def admin():
+    return render_template("admin.html")
+
+
+@auth.error_handler
+def unauthorized():
+    return (
+        "Unauthorized Access",
+        401,
+        {"WWW-Authenticate": 'Basic realm="Login Required"'},
+    )
+
 
 @bp.route("/about")
 def about():
@@ -91,19 +120,39 @@ def get_reviews():
 
 @bp.route("/leaderboard")
 def leaderboard():
-    df = pd.read_sql_table("reviews", db.engine)
+    reviews = pd.read_sql_table("reviews", db.engine)[["wine_id", "rating"]].rename(
+        columns={"wine_id": "id"}
+    )
+    wines = pd.read_sql_table("wines", db.engine)
 
+    df = wines[["id", "guest", "name"]].merge(reviews, on="id", how="left")
     # Compute average ratings and sort
     leaderboard_df = (
-        df.groupby("wine_id")["rating"]
+        df.groupby(["id", "guest", "name"])["rating"]
         .mean()
         .sort_values(ascending=False)
         .reset_index()
+        .set_index("id")
     )
 
-    # Convert DataFrame to HTML table
-    leaderboard_html = leaderboard_df.to_html(
-        index=False, classes="leaderboard", border=0
+    # Style the DataFrame
+    styled_df = leaderboard_df.style.set_properties(
+        **{
+            "text-align": "left",
+        }
+    ).set_table_styles(
+        [
+            {"selector": "th", "props": [("text-align", "left")]},
+            # Add more styling as needed
+        ]
     )
+
+    # Convert to HTML
+    leaderboard_html = styled_df.to_html()
+
+    # Convert DataFrame to HTML table
+    # leaderboard_html = leaderboard_df.to_html(
+    #     index=False, classes="leaderboard", border=0
+    # )
 
     return render_template("leaderboard.html", leaderboard=leaderboard_html)
