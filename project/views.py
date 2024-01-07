@@ -1,13 +1,39 @@
+import os
 from flask import Blueprint, render_template, request, redirect, url_for, session
 from models import Wines, Reviews, db
 from decorators import login_required
 import pandas as pd
+from flask_httpauth import HTTPBasicAuth
+
+poem = """
+For Cathy, whose journey's as rich as the sea,
+With a heart full of art and history.
+In New York's embrace, her story began,
+Now she cherishes each day, as only a mother can.
+
+Sam, her star, in West Chester shines bright,
+Chasing dreams, reaching new academic heights.
+Camille, a Hokie, with a mind keen and vast,
+In Doylestown's labs, a Scientist 2, unsurpassed.
+
+Matt strums the guitar, notes floating like a feather,
+Teaching young minds, they craft the future together.
+In the harmony of strings, in each lesson he weaves,
+A tapestry of knowledge, in which every child believes.
+
+Cathy, with a soul that mirrors the ocean's hue,
+Finds peace in seashells and the beach's view.
+Her spirit, a lighthouse, guiding with care and love,
+Illuminating paths for her children, under stars above.
+
+In this family's melody, where love and dreams entwine,
+Cathy's artful legacy gracefully continues to shine.
+From New York to beaches, where waves gently crest,
+In each chapter of life, they are truly blessed.
+"""
 
 
 bp = Blueprint("wine", __name__)
-
-from flask import Flask
-from flask_httpauth import HTTPBasicAuth
 
 auth = HTTPBasicAuth()
 
@@ -16,7 +42,6 @@ admin_users = {"admin": "bellabites"}  # Replace with your desired username and 
 
 @auth.verify_password
 def verify_password(username, password):
-    print(f"username={username}, passoword={password}")
     if username in admin_users and admin_users[username] == password:
         return username
 
@@ -50,12 +75,37 @@ def index():
 
     # Check if 'user' exists in the session
     user = session.get("user")
+    user_messages = {
+        "JOHN": "The Birds at Johns is the best",
+        "MATT": "Jack Straw",
+        "MIKE": "Welcome Sgt Mike",
+        "CATHY": poem,
+        "MELISSA": "LOVE YOU FOR DOING THIS AND FOR YOU BEING YOU",
+        "LENIN": "YOU WANT TO BREAK THIS APP, BUT WHY, HAVE FUN, ENJOY THE WINE",
+        "STEPH": "Hey Doc, give me the pulse of the party",
+        "STEPHANIE": "Hey Doc, give me the pulse of the party",
+        "BOB": "TALK ABOUT VINTAGE, THATS A 70 YEAR OLD",
+        "TINA": "LETS PUFF LATER",
+        "CHRISTINA": "LETS PUFF LATER",
+        "LAURA": "GAVIN, GRIFFEN, ROSIE...",
+        "GINA": "PLEASE DONT JUDGE THESE WINES TOO HARSHLY",
+        "REGINA": "PLEASE DONT JUDGE THESE WINES TOO HARSHLY",
+        "JUDGE": "PLEASE DONT JUDGE THESE WINES TOO HARSHLY",
+        "THE JUDGE": "PLEASE DONT JUDGE THESE WINES TOO HARSHLY",
+        "DAN": "OF ALL THE BARS IN BUCKS COUNTY, ISNT THIS HOUSE THE BEST",
+        "SCOTT": "WAS THINKING MAYBE POOL LATER BUT WOULD PROBABLY BE A SLOPPY MESS",
+    }
 
-    return render_template("index.html", user=user)
+    if user is not None:
+        message = message = user_messages.get(user.upper(), "")
+    else:
+        message = ""
+    return render_template("index.html", user=user, message=message)
 
 
 @bp.route("/add_wine", methods=["GET", "POST"])
 @login_required
+@auth.login_required
 def add_wine():
     if request.method == "POST":
         guest = request.form["guest"]
@@ -68,6 +118,7 @@ def add_wine():
 
 
 @bp.route("/wines")
+@auth.login_required
 @login_required
 def get_wines():
     wines = Wines.query.all()
@@ -112,6 +163,7 @@ def add_review(id):
 
 
 @bp.route("/get_reviews")
+@auth.login_required
 @login_required
 def get_reviews():
     reviews = Reviews.query.all()
@@ -119,6 +171,7 @@ def get_reviews():
 
 
 @bp.route("/leaderboard")
+@auth.login_required
 def leaderboard():
     reviews = pd.read_sql_table("reviews", db.engine)[["wine_id", "rating"]].rename(
         columns={"wine_id": "id"}
@@ -150,9 +203,26 @@ def leaderboard():
     # Convert to HTML
     leaderboard_html = styled_df.to_html()
 
-    # Convert DataFrame to HTML table
-    # leaderboard_html = leaderboard_df.to_html(
-    #     index=False, classes="leaderboard", border=0
-    # )
-
     return render_template("leaderboard.html", leaderboard=leaderboard_html)
+
+
+@bp.route("/reviewer_awards")
+@auth.login_required
+def reviewer_awards():
+    reviews = pd.read_sql_table("reviews", db.engine)
+    user_mean = (
+        reviews.groupby("user")["rating"]
+        .agg(["mean", "std"])
+        .sort_values(by="mean")
+        .reset_index()
+    )
+
+    harshest = user_mean.head(1).to_html(index=False)
+    most_generous = user_mean.tail(1).to_html(index=False)
+    most_consistant = user_mean.sort_values(by="std").head(1).to_html(index=False)
+    return render_template(
+        "reviewer_awards.html",
+        harshest=harshest,
+        most_generous=most_generous,
+        most_consistant=most_consistant,
+    )

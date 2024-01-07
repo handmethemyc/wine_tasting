@@ -1,0 +1,15 @@
+{% extends 'base.html' %} {% block content %}
+<h1 class="fa-solid">Reviewer Awards</h1>
+<div>
+  <h3 class="fa-solid">Harshest Critic</h3>
+  {{ harshest|safe }}
+</div>
+<div>
+  <h3 class="fa-solid">Most Generous</h3>
+  {{ most_generous|safe }}
+</div>
+<div>
+  <h3 class="fa-solid">Most Consistant</h3>
+  {{ most_consistant|safe }}
+</div>
+{% endblock content %}

@@ -1,0 +1,13 @@
+{% extends 'base.html' %} {% block content %}
+<h1>Reset Database</h1>
+
+<p>Are you sure you want to reset the database?</p>
+
+<form method="POST">
+  <label for="confirmation">Type 'yes' to confirm:</label>
+  <input type="text" id="confirmation" name="confirmation" required />
+  <button type="submit">Confirm</button>
+</form>
+
+<p><a href="{{ url_for('wine.index') }}">Cancel</a></p>
+{% endblock content %}

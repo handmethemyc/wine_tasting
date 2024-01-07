@@ -1,5 +1,5 @@
 {% extends 'base.html' %} {% block content %} {% if user %}
-<p>Welcome {{user}}</p>
+<p>Welcome {{user}}, {{message}}</p>
 {% else %}
 <form method="POST">
   <label for="user"> Who dafuk this? </label>
