@@ -4,6 +4,9 @@ from models import Wines, Reviews, db
 from decorators import login_required
 import pandas as pd
 from flask_httpauth import HTTPBasicAuth
+import plotly_express as px
+import plotly
+import json
 
 poem = """
 For Cathy, whose journey's as rich as the sea,
@@ -131,6 +134,10 @@ def add_review(id):
     max_id = db.session.query(db.func.max(Wines.id)).scalar()
     id = int(id)
     user = session["user"]
+    print(f"id={id}, max_id={max_id}")
+    if id < 1 or id > max_id:
+        return redirect(url_for("wine.add_review", id=1))
+    print("passed check for max wine")
 
     # Check if the user has already submitted a review for this wine
     existing_review = Reviews.query.filter_by(wine_id=id, user=user).first()
@@ -188,6 +195,11 @@ def leaderboard():
         .set_index("id")
     )
 
+    leader_fig = px.bar(leaderboard_df, x="guest", y="rating", title="Average Rating")
+    graphJSON = json.dumps(leader_fig, cls=plotly.utils.PlotlyJSONEncoder)
+
+    leaderboard_df["rating"] = leaderboard_df["rating"].round(2).astype(str)
+
     # Style the DataFrame
     styled_df = leaderboard_df.style.set_properties(
         **{
@@ -203,7 +215,9 @@ def leaderboard():
     # Convert to HTML
     leaderboard_html = styled_df.to_html()
 
-    return render_template("leaderboard.html", leaderboard=leaderboard_html)
+    return render_template(
+        "leaderboard.html", leaderboard=leaderboard_html, graphJSON=graphJSON
+    )
 
 
 @bp.route("/reviewer_awards")
