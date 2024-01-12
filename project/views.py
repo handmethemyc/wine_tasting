@@ -5,7 +5,8 @@ from decorators import login_required
 import pandas as pd
 import numpy as np
 from flask_httpauth import HTTPBasicAuth
-import plotly.express as px
+import plotly.graph_objs as go
+import plotly.offline as pyo
 import json
 
 
@@ -203,9 +204,11 @@ def leaderboard():
         .set_index("id")
     )
 
-    leader_fig = px.bar(leaderboard_df, x="guest", y="rating", title="Average Rating")
-    leader_fig_dict = leader_fig.to_dict()
-    graphJSON = json.dumps(leader_fig_dict, cls=CustomEncoder)
+    leader_fig = go.Figure(
+        data=[go.Bar(x=leaderboard_df["guest"], y=leaderboard_df["rating"])]
+    )
+    leader_fig.update_layout(title="Average Rating")
+    plot_div = pyo.plot(leader_fig, output_type="div", include_plotlyjs=False)
 
     leaderboard_df["rating"] = leaderboard_df["rating"].round(2).astype(str)
 
@@ -225,7 +228,9 @@ def leaderboard():
     leaderboard_html = styled_df.to_html()
 
     return render_template(
-        "leaderboard.html", leaderboard=leaderboard_html, graphJSON=graphJSON
+        "leaderboard.html",
+        leaderboard=leaderboard_html,
+        plot_div=plot_div,
     )
 
 

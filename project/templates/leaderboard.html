@@ -1,13 +1,5 @@
 {% extends 'base.html' %} {% block content %}
 <h1 class="fa-solid">Wine Ratings Leaderboard</h1>
 <div>{{ leaderboard|safe }}</div>
-<div id="plotly-graph"></div>
-
-<script type="text/javascript">
-  // Parse the JSON from Flask
-  var graph = {{ graphJSON | safe }};
-
-  // Render the plot
-  Plotly.newPlot('plotly-graph', graph.data, graph.layout);
-</script>
+<div id="plotly-graph">{{ plot_div | safe }}</div>
 {% endblock content %}
