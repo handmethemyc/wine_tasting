@@ -3,10 +3,18 @@ from flask import Blueprint, render_template, request, redirect, url_for, sessio
 from models import Wines, Reviews, db
 from decorators import login_required
 import pandas as pd
+import numpy as np
 from flask_httpauth import HTTPBasicAuth
 import plotly_express as px
-import plotly
 import json
+
+
+class CustomEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()  # Convert ndarray to list
+        return json.JSONEncoder.default(self, obj)
+
 
 poem = """
 For Cathy, whose journey's as rich as the sea,
@@ -196,7 +204,8 @@ def leaderboard():
     )
 
     leader_fig = px.bar(leaderboard_df, x="guest", y="rating", title="Average Rating")
-    graphJSON = json.dumps(leader_fig, cls=plotly.utils.PlotlyJSONEncoder)
+    leader_fig_dict = leader_fig.to_dict()
+    graphJSON = json.dumps(leader_fig_dict, cls=CustomEncoder)
 
     leaderboard_df["rating"] = leaderboard_df["rating"].round(2).astype(str)
 
