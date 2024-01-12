@@ -5,7 +5,7 @@ from decorators import login_required
 import pandas as pd
 import numpy as np
 from flask_httpauth import HTTPBasicAuth
-import plotly_express as px
+import plotly.express as px
 import json
 
 
