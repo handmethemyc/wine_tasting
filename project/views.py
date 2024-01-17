@@ -143,16 +143,16 @@ def add_review(id):
     max_id = db.session.query(db.func.max(Wines.id)).scalar()
     id = int(id)
     user = session["user"]
-    print(f"id={id}, max_id={max_id}")
-    if id < 1 or id > max_id:
+
+    if max_id is not None and (id < 1 or id > max_id):
         return redirect(url_for("wine.add_review", id=1))
-    print("passed check for max wine")
 
     # Check if the user has already submitted a review for this wine
     existing_review = Reviews.query.filter_by(wine_id=id, user=user).first()
 
     if request.method == "POST":
         if existing_review:
+            print("Existing Review Exists")
             # User has already submitted a review, perhaps update it instead
             existing_review.rating = request.form["rating"]
             existing_review.notes = request.form["notes"]
@@ -160,6 +160,7 @@ def add_review(id):
             # Add a new review
             rating = request.form["rating"]
             notes = request.form["notes"]
+            print(f"New Review wine_id={id} user={user} rating={rating}, notes={notes}")
             review = Reviews(wine_id=id, user=user, rating=rating, notes=notes)
             db.session.add(review)
 
